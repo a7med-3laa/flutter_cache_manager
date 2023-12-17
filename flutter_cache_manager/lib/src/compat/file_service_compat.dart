@@ -63,7 +63,7 @@ final  String url;
 
   @override
   String get fileExtension {
-    return url.split('.').last;
+    return ".${url.split('.').last}";
   }
 
   @override
