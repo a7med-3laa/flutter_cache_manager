@@ -36,7 +36,7 @@ class HttpFileService extends FileService {
     }
     final httpResponse = await _httpClient.send(req);
 
-    return HttpGetResponse(httpResponse);
+    return HttpGetResponse(httpResponse,url);
   }
 }
 
@@ -64,12 +64,12 @@ abstract class FileServiceResponse {
 
 /// Basic implementation of a [FileServiceResponse] for http requests.
 class HttpGetResponse implements FileServiceResponse {
-  HttpGetResponse(this._response);
+  HttpGetResponse(this._response,this.url );
 
   final DateTime _receivedTime = clock.now();
 
   final http.StreamedResponse _response;
-
+final String url;
   @override
   int get statusCode => _response.statusCode;
 
@@ -113,12 +113,6 @@ class HttpGetResponse implements FileServiceResponse {
 
   @override
   String get fileExtension {
-    var fileExtension = '';
-    final contentTypeHeader = _header(HttpHeaders.contentTypeHeader);
-    if (contentTypeHeader != null) {
-      final contentType = ContentType.parse(contentTypeHeader);
-      fileExtension = contentType.fileExtension;
-    }
-    return fileExtension;
+    return url.split('.').last;
   }
 }

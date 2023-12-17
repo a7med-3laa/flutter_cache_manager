@@ -13,15 +13,15 @@ class FileServiceCompat extends FileService {
   Future<FileServiceResponse> get(String url,
       {Map<String, String>? headers}) async {
     final legacyResponse = await fileFetcher(url, headers: headers);
-    return CompatFileServiceGetResponse(legacyResponse);
+    return CompatFileServiceGetResponse(legacyResponse,url);
   }
 }
 
 class CompatFileServiceGetResponse implements FileServiceResponse {
   final FileFetcherResponse legacyResponse;
   final DateTime _receivedTime = clock.now();
-
-  CompatFileServiceGetResponse(this.legacyResponse);
+final  String url;
+  CompatFileServiceGetResponse(this.legacyResponse,this.url);
 
   String? _header(String name) {
     return legacyResponse.header(name);
@@ -63,13 +63,7 @@ class CompatFileServiceGetResponse implements FileServiceResponse {
 
   @override
   String get fileExtension {
-    var fileExtension = '';
-    final contentTypeHeader = _header(HttpHeaders.contentTypeHeader);
-    if (contentTypeHeader != null) {
-      final contentType = ContentType.parse(contentTypeHeader);
-      fileExtension = contentType.fileExtension;
-    }
-    return fileExtension;
+    return url.split('.').last;
   }
 
   @override
